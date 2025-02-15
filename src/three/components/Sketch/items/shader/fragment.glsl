@@ -1,7 +1,6 @@
 varying vec3 vWorldPosition;
 varying vec3 vCameraPosition;
 varying vec3 vWolrdNormal;
-varying vec2 vUv;
 
 vec3 HUEToRGB(float h) {
   vec3 color;
@@ -27,10 +26,10 @@ vec3 CalcLaserColor(float fresnel, vec4 param) {
 }
 
 void main() {
-  vec3 normal = normalize(vWolrdNormal);
-  float NDotV = dot(normal, normalize(vCameraPosition - vWorldPosition));
-  vec4 param = vec4(1.,0.,.5,1.);
-  vec3 color = CalcLaserColor(vUv.x, param);
-  color = pow(color, vec3(1./2.2));
-  gl_FragColor = vec4(color, 1.0);
+  vec3 worldNormal = normalize(vWolrdNormal);
+  if(!gl_FrontFacing) worldNormal *= -1.;
+  float NDotV = dot(worldNormal, normalize(vCameraPosition - vWorldPosition));
+  vec4 param = vec4(1.,0.,.3,1.);
+  vec3 color = CalcLaserColor(NDotV, param);
+  csm_DiffuseColor.rgb *= color;
 }

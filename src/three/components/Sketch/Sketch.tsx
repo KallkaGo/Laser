@@ -1,10 +1,12 @@
-import { OrbitControls } from "@react-three/drei";
+import { Environment, OrbitControls } from "@react-three/drei";
 import { useInteractStore, useLoadedStore } from "@utils/Store";
 import { useEffect } from "react";
-import vertexShader from '../shader/vertex.glsl'
-import fragmentShader from '../shader/fragment.glsl'
+import Skirt from "./items/Skirt";
+import RES from "@/three/RES";
+
 
 const Sketch = () => {
+
   const controlDom = useInteractStore((state) => state.controlDom);
 
   useEffect(() => {
@@ -15,13 +17,9 @@ const Sketch = () => {
     <>
       <OrbitControls domElement={controlDom} />
       <color attach={"background"} args={["black"]} />
-      <mesh>
-        <planeGeometry args={[2,2,128,128]} />
-        <shaderMaterial
-          vertexShader={vertexShader}
-          fragmentShader={fragmentShader}
-        />
-      </mesh>
+      <ambientLight intensity={.5} />
+      <Environment files={RES.texture.hdr} />
+      <Skirt/>
     </>
   );
 };
