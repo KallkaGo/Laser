@@ -1,14 +1,20 @@
-import { useGLTF } from "@react-three/drei"
+import { useGLTF, useTexture } from "@react-three/drei"
 import RES from "@/three/RES"
-import { useEffect } from "react"
-import { DoubleSide, Mesh, MeshStandardMaterial } from "three"
+import { useEffect, useMemo } from "react"
+import { DoubleSide, Mesh, MeshStandardMaterial, RepeatWrapping, Uniform } from "three"
 import CustomShaderMaterial from 'three-custom-shader-material/vanilla';
 import vertexShader from './shader/vertex.glsl'
 import fragmentShader from './shader/fragment.glsl'
 
 const Skirt = () => {
   const skirtGltf = useGLTF(RES.model.skirt)
-    console.log('skirtGltf',skirtGltf);
+  
+  const noiseTex = useTexture(RES.texture.noise)
+  noiseTex.wrapS = noiseTex.wrapT = RepeatWrapping
+
+  const uniforms = useMemo(() => ({
+    uNoise: new Uniform(noiseTex)
+  }), [noiseTex])
 
   useEffect(()=>{
     skirtGltf.scene.traverse((child)=>{
@@ -20,7 +26,8 @@ const Skirt = () => {
           silent:true,
           vertexShader,
           fragmentShader,
-          side:DoubleSide
+          side:DoubleSide,
+          uniforms
         })
       }
     })
