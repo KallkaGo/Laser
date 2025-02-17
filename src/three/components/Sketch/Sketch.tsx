@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import Skirt from "./items/Skirt";
 import RES from "@/three/RES";
 import { EquirectangularReflectionMapping, SRGBColorSpace } from "three";
+import { useControls } from "leva";
 
 
 const Sketch = () => {
@@ -14,6 +15,13 @@ const Sketch = () => {
 
   const controlDom = useInteractStore((state) => state.controlDom);
 
+  const { envMapIntensity }= useControls('ENV',{
+    envMapIntensity: {
+      value: 2,
+      min: 0,
+      max: 5
+    }
+  })
 
   useEffect(() => {
     useLoadedStore.setState({ ready: true });
@@ -24,7 +32,7 @@ const Sketch = () => {
       <OrbitControls domElement={controlDom} />
       <color attach={"background"} args={["black"]} />
       <ambientLight intensity={1} />
-      <Environment map={environmentMap} background environmentIntensity={2} />
+      <Environment map={environmentMap} background environmentIntensity={envMapIntensity} />
       <Skirt/>
     </>
   );

@@ -8,6 +8,11 @@ varying vec3 vWolrdNormal;
 varying vec2 vUv;
 
 uniform sampler2D uNoise;
+uniform float uLightSpan;
+uniform float uLightOffset;
+uniform float uSaturation;
+uniform float uBrightness;
+
 
 vec3 HUEToRGB(float h) {
   vec3 color;
@@ -19,6 +24,7 @@ vec3 HUEToRGB(float h) {
 }
 
 vec3 HSVToRGB(vec3 hsv) {
+  hsv = saturate(hsv);
   vec3 rgb = HUEToRGB(hsv.x);
   vec3 color = ((rgb - 1.) * hsv.y + 1.) * hsv.z;
   return color;
@@ -49,8 +55,8 @@ void main() {
   float NDotV = clamp(dot(worldNormal, normalize(vCameraPosition - vWorldPosition)), 0., 1.);
   float fresnel = 1. - NDotV;
   fresnel += noiseSample * .2;
-  vec4 param = vec4(.6, .4, .3, .8);
-  vec3 laserColor = CalcLaserColor(fresnel, param);
+  vec4 params = vec4(uLightSpan, uLightOffset, uSaturation, uBrightness);
+  vec3 laserColor = CalcLaserColor(fresnel, params);
   vec3 objectColor = csm_DiffuseColor.rgb;
   vec3 finalColor = blendOverlay(objectColor, laserColor);
   csm_DiffuseColor.rgb = finalColor;
