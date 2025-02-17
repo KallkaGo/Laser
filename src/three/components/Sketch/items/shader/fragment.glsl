@@ -1,3 +1,7 @@
+/* 
+Reference：https://zhuanlan.zhihu.com/p/487204843
+ */
+
 varying vec3 vWorldPosition;
 varying vec3 vCameraPosition;
 varying vec3 vWolrdNormal;
@@ -28,6 +32,14 @@ vec3 CalcLaserColor(float fresnel, vec4 param) {
   return color;
 }
 
+float blendOverlay(float base, float blend) {
+  return base < 0.5 ? (2.0 * base * blend) : (1.0 - 2.0 * (1.0 - base) * (1.0 - blend));
+}
+
+vec3 blendOverlay(vec3 base, vec3 blend) {
+  return vec3(blendOverlay(base.r, blend.r), blendOverlay(base.g, blend.g), blendOverlay(base.b, blend.b));
+}
+
 void main() {
   vec2 newUV = vUv * vec2(3., 3.);
   float noiseSample = texture2D(uNoise, newUV).r;
@@ -37,7 +49,10 @@ void main() {
   float NDotV = clamp(dot(worldNormal, normalize(vCameraPosition - vWorldPosition)), 0., 1.);
   float fresnel = 1. - NDotV;
   fresnel += noiseSample * .2;
-  vec4 param = vec4(1., .4, .3, 1.);
-  vec3 color = CalcLaserColor(fresnel, param);
-  csm_DiffuseColor.rgb *= color;
+  vec4 param = vec4(.6, .4, .3, .8);
+  vec3 laserColor = CalcLaserColor(fresnel, param);
+  vec3 objectColor = csm_DiffuseColor.rgb;
+  vec3 finalColor = blendOverlay(objectColor, laserColor);
+  csm_DiffuseColor.rgb = finalColor;
+  csm_Roughness = .1;
 }

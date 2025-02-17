@@ -27,7 +27,7 @@ const Skirt = () => {
           vertexShader,
           fragmentShader,
           side:DoubleSide,
-          uniforms
+          uniforms,
         })
       }
     })
