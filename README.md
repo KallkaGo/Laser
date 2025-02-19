@@ -1,11 +1,7 @@
----
-typora-copy-images-to: preview
----
-
 # Laser
 webgl laser material - [live](https://lasermat.vercel.app/#debug)
 
-![](F:\coding\Laser\preview\preview.png)
+![](preview/preview.png)
 
 
 
